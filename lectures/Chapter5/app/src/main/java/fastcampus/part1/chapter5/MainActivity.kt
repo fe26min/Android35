@@ -8,12 +8,15 @@ import android.widget.Button
 import android.widget.Toast
 import fastcampus.part1.chapter5.databinding.ActivityMainBinding
 import kotlinx.coroutines.flow.combineTransform
+import java.text.DecimalFormat
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val firstNumberText = StringBuilder("")
     private val secondNumberText = StringBuilder("")
     private val operatorText = StringBuilder("")
+    private val decimalFormat = DecimalFormat("#,###")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,14 +46,14 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "올바르지 않은 수식 입니다.", Toast.LENGTH_SHORT).show()
             return
         }
-        val firstNumber = firstNumberText.toString().toInt()
-        val secondNumber = secondNumberText.toString().toInt()
+        val firstNumber = firstNumberText.toString().toBigDecimal()
+        val secondNumber = secondNumberText.toString().toBigDecimal()
 
         val result = when(operatorText.toString()) {
-            "+" -> firstNumber + secondNumber
-            "-" -> firstNumber - secondNumber
+            "+" -> decimalFormat.format(firstNumber + secondNumber)
+            "-" -> decimalFormat.format(firstNumber - secondNumber)
             else -> "잘못된 수식 입니다."
-        }.toString()
+        }
 
         binding.resultTextView.text = result
 
@@ -72,6 +75,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateEquationTextView() {
-        binding.equationTextView.text = "$firstNumberText $operatorText $secondNumberText"
+        val firstFormattedNumber = if(firstNumberText.isNotEmpty()) decimalFormat.format(firstNumberText.toString().toBigDecimal()) else ""
+        val secondFormattedNumber = if(secondNumberText.isNotEmpty()) decimalFormat.format(secondNumberText.toString().toBigDecimal()) else ""
+
+        binding.equationTextView.text = "$firstFormattedNumber $operatorText $secondFormattedNumber"
     }
 }
