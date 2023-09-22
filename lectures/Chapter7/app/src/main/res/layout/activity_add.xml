@@ -18,7 +18,7 @@
         android:gravity="center" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
+        android:id="@+id/textTextInputLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
        app:counterEnabled="true"
        app:layout_constraintStart_toStartOf="parent"
        app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
+       app:layout_constraintTop_toBottomOf="@+id/textTextInputLayout">
        
        <com.google.android.material.textfield.TextInputEditText
            android:id="@+id/meanTextInputEditText"
