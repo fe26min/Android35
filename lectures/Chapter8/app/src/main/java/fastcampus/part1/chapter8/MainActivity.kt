@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -18,6 +19,11 @@ import fastcampus.part1.chapter8.R
 import fastcampus.part1.chapter8.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    private val imageLoadLauncher = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) {uriList ->
+        updateImages(uriList)
+    }
+
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,8 +65,11 @@ class MainActivity : AppCompatActivity() {
                 requestReadExternalStorage()
             }
 
-
         }.show()
+    }
+
+    private fun loadImage() {
+        imageLoadLauncher.launch("image/*")
     }
 
     private fun requestReadExternalStorage() {
@@ -71,10 +80,24 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private fun updateImages(uriList: List<Uri>) {
+        Log.i("updateImages", "$uriList")
+    }
 
-    private fun loadImage() {
-        Toast.makeText(this, "이미지를 가지고 올 예정", Toast.LENGTH_SHORT).show()
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
+        when(requestCode) {
+            REQUEST_READ_EXTERNAL_STORAGE -> {
+                if(grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
+                    loadImage()
+                }
+            }
+        }
     }
 
     companion object {
