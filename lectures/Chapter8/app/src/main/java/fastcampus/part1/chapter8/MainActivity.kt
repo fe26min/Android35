@@ -35,8 +35,20 @@ class MainActivity : AppCompatActivity() {
         binding.loadImageButton.setOnClickListener {
             checkPermission()
         }
+        binding.navigateFrameActivityButton.setOnClickListener {
+            navigateToFrameActivity()
+        }
+
         initRecyclerView()
     }
+
+    private fun navigateToFrameActivity() {
+        val images = imageAdapter.currentList.filterIsInstance<ImageItems.Image>().map {it.uri.toString()}.toTypedArray()
+        val intent = Intent(this, FrameActivity::class.java)
+            .putExtra("images", images)
+        startActivity(intent)
+    }
+
 
     private fun initRecyclerView() {
         imageAdapter = ImageAdapter(object : ImageAdapter.ItemClickListener {
