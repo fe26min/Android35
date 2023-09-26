@@ -21,6 +21,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun mediaPlayerPlay() {
+//        if(mediaPlayer == null) {
+//            mediaPlayer = MediaPlayer.create(this, R.raw.cheer)
+//            mediaPlayer?.start()
+//        }
         val intent = Intent(this, MediaPlayerService::class.java)
             .apply { action = MEDIA_PLAYER_PLAY }
         startService(intent)
@@ -28,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun mediaPlayerPause() {
+
         val intent = Intent(this, MediaPlayerService::class.java)
             .apply { action = MEDIA_PLAYER_PAUSE }
         startService(intent)
@@ -37,5 +42,10 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, MediaPlayerService::class.java)
             .apply { action = MEDIA_PLAYER_STOP }
         startService(intent)
+    }
+
+    override fun onDestroy() {
+        stopService(Intent(this, MediaPlayerService::class.java))
+        super.onDestroy()
     }
 }
