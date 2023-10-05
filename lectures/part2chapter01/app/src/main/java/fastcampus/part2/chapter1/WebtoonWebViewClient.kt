@@ -8,14 +8,19 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
 
-class WebtoonWebViewClient(private val progressBar: ProgressBar) : WebViewClient() {
+class WebtoonWebViewClient(
+    private val progressBar: ProgressBar,
+    private val saveData : (String) -> Unit,
+) : WebViewClient() {
 
-    // 트루를 주면은 로딩을 하지않는다.
-    // 리퀘스트를 보고 로딩을 할지 말지를 본다.
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-        return false
-    }
 
+        // 만약 url이 comic.naver.com/webtoon/detail
+        if(request != null && request.url.toString().contains("comic.naver.com/webtoon/detail")) {
+            saveData(request.url.toString())
+        }
+        return super.shouldOverrideUrlLoading(view, request)
+    }
 
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
