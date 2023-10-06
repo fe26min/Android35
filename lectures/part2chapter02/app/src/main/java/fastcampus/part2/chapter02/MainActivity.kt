@@ -19,7 +19,7 @@ import androidx.core.content.ContextCompat
 import fastcampus.part2.chapter02.databinding.ActivityMainBinding
 import java.io.IOException
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnTimerTickListener {
     companion object {
         private const val REQUEST_RECORD_AUDIO_CODE = 200
     }
@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity() {
     private enum class State {
         RELEASE, RECORDING, PLAYING
     }
+
+    private lateinit var timer: Timer
 
 
     private lateinit var binding: ActivityMainBinding
@@ -44,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         fileName = "${externalCacheDir?.absolutePath}/audiorecordtest.3gp"
+        timer = Timer(this )
 
         binding.recordButton.setOnClickListener {
             when (state) {
@@ -130,6 +133,9 @@ class MainActivity : AppCompatActivity() {
             start()
         }
 
+        // 최대 진폭
+        recorder?.maxAmplitude?.toFloat()
+
         binding.recordButton.setImageDrawable(
             ContextCompat.getDrawable(
                 this,
@@ -149,6 +155,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         recorder = null
+
+        timer.stop()
+
         state = State.RELEASE
 
         binding.recordButton.setImageDrawable(
@@ -176,6 +185,8 @@ class MainActivity : AppCompatActivity() {
             }
             start()
         }
+
+        timer.start()
 
         player?.setOnCompletionListener {
             stopPlaying()
@@ -253,4 +264,11 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+    override fun onTick(duration: Long) {
+        TODO("Not yet implemented")
+
+        binding.waveformView.addAmplitude(recorder?.maxAmplitude?.toFloat() ?: 0f)
+    }
+
 }
