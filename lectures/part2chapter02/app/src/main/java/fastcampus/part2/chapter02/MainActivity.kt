@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import fastcampus.part2.chapter02.databinding.ActivityMainBinding
 import java.io.IOException
+import kotlin.math.min
 
 class MainActivity : AppCompatActivity(), OnTimerTickListener {
     companion object {
@@ -51,6 +52,7 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
         binding.recordButton.setOnClickListener {
             when (state) {
                 State.RELEASE -> {
+                    Log.d("test1", "record start")
                     onRecord(true)
                 }
 
@@ -117,6 +119,7 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
     private fun onPlay(start: Boolean) = if (start) startPlaying() else stopPlaying()
 
     private fun startRecording() {
+        Log.d("test1", "start record")
         state = State.RECORDING
         recorder = MediaRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
@@ -249,7 +252,6 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
                 && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
 
         if (audioRecordPermissionGranted) {
-            // todo 녹음 작업을 시작함
             onRecord(true)
         } else {
             if (ActivityCompat.shouldShowRequestPermissionRationale(
@@ -266,8 +268,12 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
     }
 
     override fun onTick(duration: Long) {
-        TODO("Not yet implemented")
 
+        val millisecond = duration % 1000
+        val second = (duration / 1000) % 60
+        val minute = ((duration / 1000) / 60)
+
+        binding.timerTextView.text = String.format("%02d:%02d.%02d", minute, second, millisecond / 10)
         binding.waveformView.addAmplitude(recorder?.maxAmplitude?.toFloat() ?: 0f)
     }
 
