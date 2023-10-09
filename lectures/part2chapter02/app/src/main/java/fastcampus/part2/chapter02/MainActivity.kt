@@ -8,7 +8,6 @@ import android.graphics.Color
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.net.Uri
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
@@ -18,7 +17,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import fastcampus.part2.chapter02.databinding.ActivityMainBinding
 import java.io.IOException
-import kotlin.math.min
 
 class MainActivity : AppCompatActivity(), OnTimerTickListener {
     companion object {
@@ -74,6 +72,8 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
                 }
             }
         }
+        binding.playButton.isEnabled = false
+        binding.playButton.alpha = 0.3f
 
         binding.stopButton.setOnClickListener {
             when (state) {
@@ -136,6 +136,9 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
             start()
         }
 
+        binding.waveformView.clearData()
+        timer.start()
+
         // 최대 진폭
         recorder?.maxAmplitude?.toFloat()
 
@@ -145,7 +148,7 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
                 R.drawable.baseline_stop_24
             )
         )
-        binding.recordButton.imageTintList = ColorStateList.valueOf(Color.BLACK)
+        binding.recordButton.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.black))
         binding.playButton.isEnabled = false
         binding.playButton.alpha = 0.3f
 
@@ -189,6 +192,7 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
             start()
         }
 
+        binding.waveformView.clearWave()
         timer.start()
 
         player?.setOnCompletionListener {
@@ -204,6 +208,8 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
 
         player?.reset()
         player = null
+
+        timer.stop()
 
         binding.recordButton.isEnabled = true
         binding.recordButton.alpha = 1.0f
@@ -226,7 +232,7 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
 
     private fun showPermissionSettingDialog() {
         AlertDialog.Builder(this)
-            .setMessage("녹음 권한을 켜주셔야지 앱을 정상적으로 사용할 수 있습니다. 앱 설정 화면으로 진입하셔서 권한을 켜주세요")
+            .setMessage(getString(R.string.permission_setting_message))
             .setPositiveButton("권한 변경하러 가기") { _, _ ->
                 navigateToAppSetting()
             }.setNegativeButton("취소") { dialogInterface, _ -> dialogInterface.cancel() }
@@ -268,13 +274,18 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
     }
 
     override fun onTick(duration: Long) {
-
         val millisecond = duration % 1000
         val second = (duration / 1000) % 60
         val minute = ((duration / 1000) / 60)
 
         binding.timerTextView.text = String.format("%02d:%02d.%02d", minute, second, millisecond / 10)
-        binding.waveformView.addAmplitude(recorder?.maxAmplitude?.toFloat() ?: 0f)
+
+        if(state == State.PLAYING) {
+            binding.waveformView.replayAmplitude()
+
+        } else if(state == State.RECORDING) {
+            binding.waveformView.addAmplitude(recorder?.maxAmplitude?.toFloat() ?: 0f)
+        }
     }
 
 }
