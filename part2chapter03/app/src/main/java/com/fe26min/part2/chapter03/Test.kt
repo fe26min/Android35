@@ -14,7 +14,6 @@ fun main() {
         while(true) {
             val socket = server.accept()
 
-
 //        // 스트림은 한 방향
 //        socket.getInputStream()     // 클라이언트로부터 들어오는 스트림 == 클라이언트의 socket.outputStream
 //        socket.getOutputStream()    // 클라이언트에게 데이터를 주는 스트림 == 클라이언트의 socket.inputStream
