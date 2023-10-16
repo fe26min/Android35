@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val runnable = Runnable {
-            searchUser(searchFor)
+            searchUser()
         }
 
         binding.searchEditText.addTextChangedListener {
@@ -61,13 +61,13 @@ class MainActivity : AppCompatActivity() {
                 runnable,
                 300,
             )
-
-            searchUser(it.toString())
+            Log.d("test", it.toString())
+            searchUser()
         }
 
     }
 
-    private fun searchUser(query: String) {
+    private fun searchUser() {
         val githubService = retrofit.create(GithubService::class.java)
 
         githubService.searchUsers(searchFor).enqueue(object : Callback<UserDto> {
@@ -77,6 +77,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<UserDto>, t: Throwable) {
+
                 Toast.makeText(this@MainActivity, "에러가 발생했습니다.", Toast.LENGTH_SHORT).show()
             }
 
