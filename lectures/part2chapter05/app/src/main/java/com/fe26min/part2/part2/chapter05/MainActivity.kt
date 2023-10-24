@@ -1,8 +1,11 @@
 package com.fe26min.part2.part2.chapter05
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fe26min.part2.part2.chapter05.databinding.ActivityMainBinding
 import com.tickaroo.tikxml.TikXml
@@ -76,15 +79,31 @@ class MainActivity : AppCompatActivity() {
             binding.itChip.isChecked = true
 
 
-            newsService.politicsNews().submitList()
+            newsService.itNews().submitList()
         }
 
         binding.sportChip.setOnClickListener {
             binding.chipGroup.clearCheck()
             binding.sportChip.isChecked = true
 
-
             newsService.sportNews().submitList()
+        }
+
+        binding.searchTextInputEditText.setOnEditorActionListener { v, actionId, event ->
+            if(actionId == EditorInfo.IME_ACTION_SEARCH) {
+                binding.chipGroup.clearCheck()
+
+
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(v.windowToken, 0)
+
+                binding.searchTextInputEditText.clearFocus()
+
+                newsService.search(binding.searchTextInputEditText.text.toString()).submitList()
+
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener true
         }
 
         binding.feedChip.isChecked = true
